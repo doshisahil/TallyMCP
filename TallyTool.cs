@@ -12,24 +12,24 @@ public static class TallyTool
     public class Transaction
     {
         [Description("Type of transaction (Receipt or Payment)")]
-        public string Type { get; set; }
+        public string Type { get; set; } = string.Empty;
         [Description("Date of the transaction in DD-MM-YYYY format")]
-        public string Date { get; set; }
+        public string Date { get; set; } = string.Empty;
         [Description("Narration of the transaction")]
-        public string Narration { get; set; }
+        public string Narration { get; set; } = string.Empty;
         [Description("Amount of the transaction")]
         public decimal Amount { get; set; }
         [Description("Ledger to credit/debit (To)")]
-        public string ToLedger { get; set; }
+        public string ToLedger { get; set; } = string.Empty;
         [Description("Ledger to credit/debit (From)")]
-        public string FromAccount { get; set; }
+        public string FromAccount { get; set; } = string.Empty;
     }
 
     [McpServerTool, Description("Imports a list of transactions from JSON and sends them to Tally.")]
     public static async Task<string> ImportVoucher(List<Transaction> transactions)
     {
         var requestXml = TallyXmlBuilder.BuildVoucherImportXml(transactions);
-        var responseXml = await TallyHttpClient.PostToTallyAsync(requestXml);
+        var responseXml = await TallyHttpClientExtensions.PostToTallyAsync(requestXml);
         var sanitizedXml = TallyXmlSanitizer.Sanitize(responseXml);
         var json = TallyXmlParser.ParseImportResponseToJson(sanitizedXml);
         return JsonSerializer.Serialize(new { json });
@@ -39,7 +39,7 @@ public static class TallyTool
     public static async Task<string> FetchCompanyList()
     {
         var requestXml = TallyXmlBuilder.BuildCompanyListRequestXml();
-        var responseXml = await TallyHttpClient.PostToTallyAsync(requestXml);
+        var responseXml = await TallyHttpClientExtensions.PostToTallyAsync(requestXml);
         var sanitizedXml = TallyXmlSanitizer.Sanitize(responseXml);
         var json = TallyXmlParser.ParseCompanyListToJson(sanitizedXml);
         return JsonSerializer.Serialize(new { json });
@@ -49,14 +49,14 @@ public static class TallyTool
     public static async Task<string> FetchLedgerList(string companyName)
     {
         var requestXml = TallyXmlBuilder.BuildLedgerListRequestXml(companyName);
-        var responseXml = await TallyHttpClient.PostToTallyAsync(requestXml);
+        var responseXml = await TallyHttpClientExtensions.PostToTallyAsync(requestXml);
         var sanitizedXml = TallyXmlSanitizer.Sanitize(responseXml);
         var json = TallyXmlParser.ParseLedgerListToJson(sanitizedXml);
         return JsonSerializer.Serialize(new { json });
     }
 
     [McpServerTool, Description("Extracts all text from a PDF file using PdfPig. Optionally accepts a password for encrypted PDFs. Returns the full text as a string.")]
-    public static string ExtractTextFromPdf(string pdfFilePath, string password = null)
+    public static string ExtractTextFromPdf(string pdfFilePath, string? password = null)
     {
         if (string.IsNullOrWhiteSpace(pdfFilePath) || !File.Exists(pdfFilePath))
             return "Invalid file path.";

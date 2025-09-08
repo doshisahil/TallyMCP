@@ -1,0 +1,193 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_NAME: 'TallyMCP'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    name: Build and Test
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Test
+      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory "TestResults"
+      
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results
+        path: TestResults/*.trx
+
+  code-quality:
+    runs-on: ubuntu-latest
+    name: Code Quality Analysis
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Build for analysis
+      run: dotnet build --no-restore --configuration Release
+      
+    - name: Run code analysis
+      run: dotnet build --configuration Release --verbosity normal /p:TreatWarningsAsErrors=true
+
+  publish-linux:
+    runs-on: ubuntu-latest
+    name: Publish Linux Binary
+    needs: [build-and-test, code-quality]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish Linux x64
+      run: dotnet publish TallyMCP.csproj -c Release -r linux-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/linux-x64
+      
+    - name: Upload Linux binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: tallymcp-linux-x64
+        path: ./publish/linux-x64/${{ env.PROJECT_NAME }}
+
+  publish-windows:
+    runs-on: windows-latest
+    name: Publish Windows Binary
+    needs: [build-and-test, code-quality]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish Windows x64
+      run: dotnet publish TallyMCP.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/win-x64
+      
+    - name: Upload Windows binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: tallymcp-windows-x64
+        path: ./publish/win-x64/${{ env.PROJECT_NAME }}.exe
+
+  publish-macos:
+    runs-on: macos-latest
+    name: Publish macOS Binary
+    needs: [build-and-test, code-quality]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        
+    - name: Restore dependencies
+      run: dotnet restore
+      
+    - name: Publish macOS x64
+      run: dotnet publish TallyMCP.csproj -c Release -r osx-x64 --self-contained true -p:PublishSingleFile=true -p:PublishTrimmed=true -o ./publish/osx-x64
+      
+    - name: Upload macOS binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: tallymcp-macos-x64
+        path: ./publish/osx-x64/${{ env.PROJECT_NAME }}
+
+  release:
+    runs-on: ubuntu-latest
+    name: Create Release Assets
+    needs: [publish-linux, publish-windows, publish-macos]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Download all artifacts
+      uses: actions/download-artifact@v4
+      
+    - name: Create release archives
+      run: |
+        # Create archives for each platform
+        cd tallymcp-linux-x64 && tar -czf ../tallymcp-linux-x64.tar.gz * && cd ..
+        cd tallymcp-windows-x64 && zip -r ../tallymcp-windows-x64.zip * && cd ..
+        cd tallymcp-macos-x64 && tar -czf ../tallymcp-macos-x64.tar.gz * && cd ..
+        
+    - name: Upload release assets
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./tallymcp-windows-x64.zip
+        asset_name: tallymcp-windows-x64.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Linux release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./tallymcp-linux-x64.tar.gz
+        asset_name: tallymcp-linux-x64.tar.gz
+        asset_content_type: application/gzip
+        
+    - name: Upload macOS release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./tallymcp-macos-x64.tar.gz
+        asset_name: tallymcp-macos-x64.tar.gz
+        asset_content_type: application/gzip
