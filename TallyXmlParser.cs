@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public static class TallyXmlParser
 {
-    public static object ParseImportResponseToJson(string xml)
+    public static object? ParseImportResponseToJson(string xml)
     {
         try
         {
@@ -23,7 +23,7 @@ public static class TallyXmlParser
         catch { return null; }
     }
 
-    public static object ParseCompanyListToJson(string xml)
+    public static object? ParseCompanyListToJson(string xml)
     {
         try
         {
@@ -39,7 +39,7 @@ public static class TallyXmlParser
         catch { return null; }
     }
 
-    public static object ParseLedgerListToJson(string xml)
+    public static object? ParseLedgerListToJson(string xml)
     {
         try
         {
