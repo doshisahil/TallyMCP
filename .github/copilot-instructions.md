@@ -1,0 +1,3 @@
+- Always use Microsoft provided nuget library wherever possible.
+- Avoid using not so trusted and popular nuget library
+- Always update the Unit test cases & Documentetion along with code change.
