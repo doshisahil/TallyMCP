@@ -1,5 +1,9 @@
 name: TallyMCP CI/CD Pipeline
 permissions:
+  # Required for all workflows
+  security-events: write
+  # Required for workflows in private repositories
+  actions: read
   contents: read
 
 on:
@@ -96,14 +100,13 @@ jobs:
       uses: github/codeql-action/analyze@v3
       with:
         category: "/language:csharp"
-        upload: true
-        output: sarif-results
-        checkout_path: ${{ github.workspace }}
 
   # Publish job - only runs on release
   publish:
     needs: build-and-test
     if: github.event_name == 'release'
+    permissions:
+      contents: write
     strategy:
       matrix:
         include:
@@ -133,10 +136,10 @@ jobs:
     - name: Publish binary
       run: |
         dotnet publish ${{ env.PROJECT_NAME }}.csproj -c Release -r ${{ matrix.platform }} \
-        --self-contained true \
-        -p:PublishSingleFile=true \
-        -p:PublishTrimmed=true \
-        -o ./publish/${{ matrix.platform }}
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -p:PublishTrimmed=true \
+          -o ./publish/${{ matrix.platform }}
     
     - name: Upload binary
       uses: actions/upload-artifact@v4
@@ -156,14 +159,14 @@ jobs:
         asset_name: ${{ env.PROJECT_NAME }}-${{ matrix.platform }}${{ matrix.extension }}
         asset_content_type: application/octet-stream
 
-  # Cleanup job - runs daily to remove old artifacts
+  # Cleanup job - runs on schedule to clean up old artifacts
   cleanup:
     runs-on: ubuntu-latest
     if: github.event_name == 'schedule'
     
     steps:
-    - name: Delete old artifacts
-      uses: actions/delete-artifact@v4
-      with:
-        # Remove artifacts older than 7 days
-        age: '7 days'
+      - name: Delete old artifacts
+        uses: actions/delete-artifact@v4
+        with:
+          # Remove artifacts older than 7 days
+          age: '7 days'

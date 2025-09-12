@@ -13,6 +13,8 @@ on:
 
 permissions:
   contents: read
+  pull-requests: read # Needed for PR analysis
+  security-events: write # Needed for security analysis results
 
 jobs:
   analyze:
