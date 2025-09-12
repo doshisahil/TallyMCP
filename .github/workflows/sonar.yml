@@ -11,6 +11,9 @@ on:
   schedule:
     - cron: '0 2 * * 1' # Weekly analysis on Mondays at 2 AM
 
+permissions:
+  contents: read
+
 jobs:
   analyze:
     name: SonarQube Analysis
