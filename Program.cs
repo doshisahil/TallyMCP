@@ -42,14 +42,14 @@ try
 {
     var optionsSnapshot = app.Services.GetRequiredService<IOptionsSnapshot<TallyMcpOptions>>();
     var config = optionsSnapshot.Value;
-    
+
     var validationResult = TallyMcpOptionsValidator.ValidateOptions(config);
     if (validationResult != null)
     {
         app.Logger.LogCritical("Configuration validation failed: {ValidationError}", validationResult.ErrorMessage);
         return 1;
     }
-    
+
     app.Logger.LogInformation("Configuration validated successfully");
     app.Logger.LogInformation("Starting TallyMCP server on {ServerUrl}", config.Server.GetUrl());
     app.Logger.LogInformation("Tally endpoint configured at {TallyUrl}", config.Tally.GetUrl());
@@ -62,7 +62,7 @@ try
 }
 catch (OptionsValidationException ex)
 {
-    app.Logger.LogCritical("Configuration validation failed: {ValidationErrors}", 
+    app.Logger.LogCritical("Configuration validation failed: {ValidationErrors}",
         string.Join(", ", ex.Failures));
     return 1;
 }
@@ -78,12 +78,12 @@ public class TallyMcpOptionsValidation : IValidateOptions<TallyMcpOptions>
     public ValidateOptionsResult Validate(string? name, TallyMcpOptions options)
     {
         var validationResult = TallyMcpOptionsValidator.ValidateOptions(options);
-        
+
         if (validationResult != null)
         {
             return ValidateOptionsResult.Fail(validationResult.ErrorMessage ?? "Configuration validation failed");
         }
-        
+
         return ValidateOptionsResult.Success;
     }
 }

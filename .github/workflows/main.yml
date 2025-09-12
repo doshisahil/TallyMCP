@@ -48,13 +48,14 @@ jobs:
       run: dotnet restore
     
     - name: Check code formatting
-      run: |
-        dotnet format --verify-no-changes --verbosity diagnostic
-        if [ $? -ne 0 ]; then
-          echo "Code formatting check failed. Run 'dotnet format' locally to fix."
-          exit 1
-        fi
       if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: |
+        set -eo pipefail
+        dotnet format TallyMCP.sln --verify-no-changes --verbosity diagnostic || {
+          echo "::error::Code formatting check failed. Run 'dotnet format TallyMCP.sln' locally to fix."
+          exit 1
+        }
     
     - name: Build
       run: dotnet build --no-restore --configuration Release
