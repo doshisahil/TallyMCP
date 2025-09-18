@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Xunit;
 
 namespace TallyMCP.Tests;
@@ -12,7 +11,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(null!);
 
         // Assert
-        result.Should().BeEmpty();
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -22,7 +21,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize("");
 
         // Assert
-        result.Should().BeEmpty();
+        Assert.Empty(result);
     }
 
     [Fact]
@@ -35,7 +34,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be("Some textwith control character");
+        Assert.Equal("Some textwith control character", result);
     }
 
     [Fact]
@@ -48,7 +47,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be("Company &amp; Associates");
+        Assert.Equal("Company &amp; Associates", result);
     }
 
     [Fact]
@@ -61,7 +60,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be("Company &amp; Associates &lt;Test&gt; &quot;Quote&quot; &apos;Apostrophe&apos;");
+        Assert.Equal("Company &amp; Associates &lt;Test&gt; &quot;Quote&quot; &apos;Apostrophe&apos;", result);
     }
 
     [Fact]
@@ -74,7 +73,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be("Test &amp; &amp; content with &amp; special chars");
+        Assert.Equal("Test &amp; &amp; content with &amp; special chars", result);
     }
 
     [Fact]
@@ -87,7 +86,7 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be("Normal text without special characters");
+        Assert.Equal("Normal text without special characters", result);
     }
 
     [Theory]
@@ -102,6 +101,6 @@ public class TallyXmlSanitizerTests
         var result = TallyXmlSanitizer.Sanitize(input);
 
         // Assert
-        result.Should().Be(expected);
+        Assert.Equal(expected, result);
     }
 }

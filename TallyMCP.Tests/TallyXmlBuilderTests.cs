@@ -1,4 +1,3 @@
-using FluentAssertions;
 using Xunit;
 
 namespace TallyMCP.Tests;
@@ -12,16 +11,17 @@ public class TallyXmlBuilderTests
         var result = TallyXmlBuilder.BuildCompanyListRequestXml();
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().Contain("<ENVELOPE>");
-        result.Should().Contain("<HEADER>");
-        result.Should().Contain("<VERSION>1</VERSION>");
-        result.Should().Contain("<TALLYREQUEST>Export</TALLYREQUEST>");
-        result.Should().Contain("<TYPE>Collection</TYPE>");
-        result.Should().Contain("<ID>List of Companies</ID>");
-        result.Should().Contain("<COLLECTION NAME=\"List of Companies\"");
-        result.Should().Contain("<TYPE>Company</TYPE>");
-        result.Should().Contain("<FETCH>NAME</FETCH>");
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Contains("<ENVELOPE>", result);
+        Assert.Contains("<HEADER>", result);
+        Assert.Contains("<VERSION>1</VERSION>", result);
+        Assert.Contains("<TALLYREQUEST>Export</TALLYREQUEST>", result);
+        Assert.Contains("<TYPE>Collection</TYPE>", result);
+        Assert.Contains("<ID>List of Companies</ID>", result);
+        Assert.Contains("<COLLECTION NAME=\"List of Companies\"", result);
+        Assert.Contains("<TYPE>Company</TYPE>", result);
+        Assert.Contains("<FETCH>NAME</FETCH>", result);
     }
 
     [Fact]
@@ -34,18 +34,19 @@ public class TallyXmlBuilderTests
         var result = TallyXmlBuilder.BuildLedgerListRequestXml(companyName);
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().Contain("<ENVELOPE>");
-        result.Should().Contain("<HEADER>");
-        result.Should().Contain("<VERSION>1</VERSION>");
-        result.Should().Contain("<TALLYREQUEST>Export</TALLYREQUEST>");
-        result.Should().Contain("<TYPE>Collection</TYPE>");
-        result.Should().Contain("<ID>List of Ledgers</ID>");
-        result.Should().Contain("<SVCURRENTCOMPANY>Test Company</SVCURRENTCOMPANY>");
-        result.Should().Contain("<COLLECTION NAME=\"List of Ledgers\"");
-        result.Should().Contain("<TYPE>Ledger</TYPE>");
-        result.Should().Contain("<FETCH>NAME</FETCH>");
-        result.Should().Contain("<FETCH>PARENT</FETCH>");
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Contains("<ENVELOPE>", result);
+        Assert.Contains("<HEADER>", result);
+        Assert.Contains("<VERSION>1</VERSION>", result);
+        Assert.Contains("<TALLYREQUEST>Export</TALLYREQUEST>", result);
+        Assert.Contains("<TYPE>Collection</TYPE>", result);
+        Assert.Contains("<ID>List of Ledgers</ID>", result);
+        Assert.Contains("<SVCURRENTCOMPANY>Test Company</SVCURRENTCOMPANY>", result);
+        Assert.Contains("<COLLECTION NAME=\"List of Ledgers\"", result);
+        Assert.Contains("<TYPE>Ledger</TYPE>", result);
+        Assert.Contains("<FETCH>NAME</FETCH>", result);
+        Assert.Contains("<FETCH>PARENT</FETCH>", result);
     }
 
     [Fact]
@@ -69,20 +70,21 @@ public class TallyXmlBuilderTests
         var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().Contain("<ENVELOPE>");
-        result.Should().Contain("<HEADER>");
-        result.Should().Contain("<VERSION>1</VERSION>");
-        result.Should().Contain("<TALLYREQUEST>Import</TALLYREQUEST>");
-        result.Should().Contain("<TYPE>Data</TYPE>");
-        result.Should().Contain("<ID>Vouchers</ID>");
-        result.Should().Contain("<VOUCHER>");
-        result.Should().Contain("<DATE>20240101</DATE>");
-        result.Should().Contain("<NARRATION>Test transaction</NARRATION>");
-        result.Should().Contain("<VOUCHERTYPENAME>Receipt</VOUCHERTYPENAME>");
-        result.Should().Contain("<ALLLEDGERENTRIES.LIST>");
-        result.Should().Contain("<AMOUNT>1000.50</AMOUNT>");
-        result.Should().Contain("<AMOUNT>-1000.50</AMOUNT>");
+        Assert.NotNull(result);
+        Assert.NotEmpty(result);
+        Assert.Contains("<ENVELOPE>", result);
+        Assert.Contains("<HEADER>", result);
+        Assert.Contains("<VERSION>1</VERSION>", result);
+        Assert.Contains("<TALLYREQUEST>Import</TALLYREQUEST>", result);
+        Assert.Contains("<TYPE>Data</TYPE>", result);
+        Assert.Contains("<ID>Vouchers</ID>", result);
+        Assert.Contains("<VOUCHER>", result);
+        Assert.Contains("<DATE>20240101</DATE>", result);
+        Assert.Contains("<NARRATION>Test transaction</NARRATION>", result);
+        Assert.Contains("<VOUCHERTYPENAME>Receipt</VOUCHERTYPENAME>", result);
+        Assert.Contains("<ALLLEDGERENTRIES.LIST>", result);
+        Assert.Contains("<AMOUNT>1000.50</AMOUNT>", result);
+        Assert.Contains("<AMOUNT>-1000.50</AMOUNT>", result);
     }
 
     [Fact]
@@ -95,16 +97,16 @@ public class TallyXmlBuilderTests
         var result = TallyXmlBuilder.EncodeXmlText(input);
 
         // Assert
-        result.Should().Be("Test &amp; &lt;Company&gt; &quot;Name&quot; &apos;Value&apos;");
+        Assert.Equal("Test &amp; &lt;Company&gt; &quot;Name&quot; &apos;Value&apos;", result);
     }
 
     [Fact]
     public void EncodeXmlText_WithNullOrEmpty_ShouldReturnEmpty()
     {
         // Act & Assert
-        TallyXmlBuilder.EncodeXmlText(null!).Should().BeEmpty();
-        TallyXmlBuilder.EncodeXmlText("").Should().BeEmpty();
-        TallyXmlBuilder.EncodeXmlText(string.Empty).Should().BeEmpty();
+        Assert.Empty(TallyXmlBuilder.EncodeXmlText(null!));
+        Assert.Empty(TallyXmlBuilder.EncodeXmlText(""));
+        Assert.Empty(TallyXmlBuilder.EncodeXmlText(string.Empty));
     }
 
     [Theory]
@@ -121,6 +123,6 @@ public class TallyXmlBuilderTests
         });
 
         // Assert
-        result.Should().Contain($"<DATE>{expected}</DATE>");
+        Assert.Contains($"<DATE>{expected}</DATE>", result);
     }
 }

@@ -1,4 +1,3 @@
-using FluentAssertions;
 using TallyMCP.Configuration;
 using Xunit;
 
@@ -13,9 +12,9 @@ public class TallyMcpOptionsTests
         var options = new ServerOptions();
 
         // Assert
-        options.Host.Should().Be("localhost");
-        options.Port.Should().Be(3001);
-        options.GetUrl().Should().Be("http://localhost:3001");
+        Assert.Equal("localhost", options.Host);
+        Assert.Equal(3001, options.Port);
+        Assert.Equal("http://localhost:3001", options.GetUrl());
     }
 
     [Fact]
@@ -25,9 +24,9 @@ public class TallyMcpOptionsTests
         var options = new TallyOptions();
 
         // Assert
-        options.Host.Should().Be("localhost");
-        options.Port.Should().Be(9000);
-        options.GetUrl().Should().Be("http://localhost:9000");
+        Assert.Equal("localhost", options.Host);
+        Assert.Equal(9000, options.Port);
+        Assert.Equal("http://localhost:9000", options.GetUrl());
     }
 
     [Fact]
@@ -41,7 +40,7 @@ public class TallyMcpOptionsTests
         };
 
         // Assert
-        options.GetUrl().Should().Be("http://192.168.1.100:8080");
+        Assert.Equal("http://192.168.1.100:8080", options.GetUrl());
     }
 
     [Fact]
@@ -55,7 +54,7 @@ public class TallyMcpOptionsTests
         };
 
         // Assert
-        options.GetUrl().Should().Be("http://192.168.1.200:9001");
+        Assert.Equal("http://192.168.1.200:9001", options.GetUrl());
     }
 
     [Fact]
@@ -65,11 +64,11 @@ public class TallyMcpOptionsTests
         var options = new TallyMcpOptions();
 
         // Assert
-        options.Server.Should().NotBeNull();
-        options.Tally.Should().NotBeNull();
-        options.Server.Host.Should().Be("localhost");
-        options.Server.Port.Should().Be(3001);
-        options.Tally.Host.Should().Be("localhost");
-        options.Tally.Port.Should().Be(9000);
+        Assert.NotNull(options.Server);
+        Assert.NotNull(options.Tally);
+        Assert.Equal("localhost", options.Server.Host);
+        Assert.Equal(3001, options.Server.Port);
+        Assert.Equal("localhost", options.Tally.Host);
+        Assert.Equal(9000, options.Tally.Port);
     }
 }
