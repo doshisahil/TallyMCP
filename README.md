@@ -339,7 +339,8 @@ This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.t
 
 TallyMCP uses several third-party libraries, each with their own licenses:
 
-- **PdfPig**: Apache-2.0 License - Used for PDF text extraction
+- **PdfPig**: Apache-2.0 License - Used for PDF text extraction  
+  (includes external components: PDFBox/FontBox BSD-3-Clause, Adobe AFM/CMaps)
 - **Model Context Protocol SDK**: MIT License - Core MCP functionality
 - **Microsoft .NET Extensions**: MIT License - Hosting and dependency injection
 - **Testing Libraries**: Various licenses (Apache-2.0, MIT, BSD-3-Clause)
