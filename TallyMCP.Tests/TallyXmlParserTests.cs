@@ -1,4 +1,3 @@
-using FluentAssertions;
 using System.Linq;
 using Xunit;
 
@@ -33,11 +32,11 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseImportResponseToJson(xml);
 
         // Assert
-        result.Should().NotBeNull();
+        Assert.NotNull(result);
         var dict = result as Dictionary<string, object>;
-        dict.Should().NotBeNull();
-        dict.Should().ContainKey("ImportResult");
-        dict.Should().ContainKey("CmpInfo");
+        Assert.NotNull(dict);
+        Assert.True(dict.ContainsKey("ImportResult"));
+        Assert.True(dict.ContainsKey("CmpInfo"));
     }
 
     [Fact]
@@ -50,7 +49,7 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseImportResponseToJson(invalidXml);
 
         // Assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -78,13 +77,13 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseCompanyListToJson(xml);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeAssignableTo<System.Collections.IEnumerable>();
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<System.Collections.IEnumerable>(result);
 
         // Cast to IEnumerable to count items
         var companies = (System.Collections.IEnumerable)result!;
         var companyList = companies.Cast<object>().ToList();
-        companyList.Should().HaveCount(2);
+        Assert.Equal(2, companyList.Count);
     }
 
     [Fact]
@@ -97,7 +96,7 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseCompanyListToJson(invalidXml);
 
         // Assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -127,13 +126,13 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseLedgerListToJson(xml);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeAssignableTo<System.Collections.IEnumerable>();
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<System.Collections.IEnumerable>(result);
 
         // Cast to IEnumerable to count items
         var ledgers = (System.Collections.IEnumerable)result!;
         var ledgerList = ledgers.Cast<object>().ToList();
-        ledgerList.Should().HaveCount(2);
+        Assert.Equal(2, ledgerList.Count);
     }
 
     [Fact]
@@ -146,7 +145,7 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseLedgerListToJson(invalidXml);
 
         // Assert
-        result.Should().BeNull();
+        Assert.Null(result);
     }
 
     [Fact]
@@ -168,12 +167,12 @@ public class TallyXmlParserTests
         var result = TallyXmlParser.ParseLedgerListToJson(xml);
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().BeAssignableTo<System.Collections.IEnumerable>();
+        Assert.NotNull(result);
+        Assert.IsAssignableFrom<System.Collections.IEnumerable>(result);
 
         // Cast to IEnumerable to count items
         var ledgers = (System.Collections.IEnumerable)result!;
         var ledgerList = ledgers.Cast<object>().ToList();
-        ledgerList.Should().BeEmpty();
+        Assert.Empty(ledgerList);
     }
 }

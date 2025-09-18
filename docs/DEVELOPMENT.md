@@ -2,28 +2,38 @@
 
 ## Development Dependencies and Licensing
 
-### FluentAssertions Licensing Notice
+### Testing Libraries
 
-This project uses FluentAssertions for unit testing. FluentAssertions is licensed under the Xceed Community License Agreement, which permits **non-commercial use only**.
+This project uses only Microsoft-provided and open source testing libraries with permissive licenses:
 
-**Important Notes:**
-- FluentAssertions is used **only in test projects** and is not included in the distributed application
-- For commercial development, you may need to obtain a commercial license from Xceed Software Inc.
-- The Community License covers open source, personal, and experimental projects
-- See [THIRD-PARTY-NOTICES.txt](../THIRD-PARTY-NOTICES.txt) for complete licensing information
+- **xUnit**: Apache-2.0 License - Primary testing framework
+- **Moq**: BSD-3-Clause License - Mocking framework for unit tests
+- **Microsoft.NET.Test.Sdk**: MIT License - Test platform and runner
+- **Coverlet**: MIT License - Code coverage collection
 
-### Alternative Testing Libraries
+All testing dependencies use permissive licenses that are fully compatible with commercial and open source projects.
 
-If you need to avoid the FluentAssertions licensing restrictions, you can replace it with alternatives:
+### Testing Approach
+
+The project uses standard xUnit assertions:
 
 ```csharp
-// Instead of FluentAssertions
-result.Should().Be(expected);
+// Basic assertions
+Assert.Equal(expected, actual);
+Assert.True(condition);
+Assert.False(condition);
+Assert.Null(value);
+Assert.NotNull(value);
 
-// Use standard assertions
-Assert.Equal(expected, result);
+// String assertions
+Assert.Empty(string);
+Assert.NotEmpty(string);
+Assert.Contains("substring", fullString);
 
-// Or other MIT-licensed assertion libraries
+// Collection assertions
+Assert.Single(collection);
+Assert.Empty(collection);
+Assert.Equal(expectedCount, collection.Count);
 ```
 
 ### Building and Testing
@@ -32,8 +42,11 @@ Assert.Equal(expected, result);
 # Build the project
 dotnet build
 
-# Run tests (will show FluentAssertions license warning)
+# Run tests
 dotnet test
+
+# Run tests with coverage
+dotnet test --collect:"XPlat Code Coverage"
 
 # Run tests with specific category
 dotnet test --filter="Category=Unit"
@@ -43,6 +56,6 @@ dotnet test --filter="Category=Unit"
 
 This project maintains strict license compliance:
 - Production code uses only MIT and Apache-2.0 licensed dependencies
-- Test dependencies are clearly separated and documented
+- Test dependencies use permissive licenses (Apache-2.0, MIT, BSD-3-Clause)
 - All third-party licenses are properly attributed in THIRD-PARTY-NOTICES.txt
 - The main application remains under MIT license without restrictions

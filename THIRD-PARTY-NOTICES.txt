@@ -76,21 +76,6 @@ SOFTWARE.
 
 ========================================================================================
 
-FluentAssertions (https://github.com/fluentassertions/fluentassertions)
-Version: 8.6.0
-License: Community License Agreement (for Non-Commercial Use)
-Copyright: Xceed Software Inc.
-
-NOTE: FluentAssertions is used ONLY in test projects and is not included in the 
-distributed application. It is licensed under the Xceed Community License Agreement
-which permits non-commercial use. For commercial use of FluentAssertions, a commercial
-license would need to be obtained from Xceed Software Inc.
-
-This component is for development and testing purposes only and does not affect
-the licensing of the main TallyMCP application.
-
-========================================================================================
-
 xUnit.net Testing Framework (https://github.com/xunit/xunit)
 Packages: xunit, xunit.runner.visualstudio, xunit.abstractions, etc.
 Version: 2.4.2

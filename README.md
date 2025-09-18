@@ -348,7 +348,7 @@ For complete licensing information and attributions, see [THIRD-PARTY-NOTICES.tx
 
 ### License Compatibility
 
-All production dependencies use permissive licenses (MIT, Apache-2.0) that are compatible with the MIT license of this project. Test-only dependencies may have additional restrictions but do not affect the distribution of the main application.
+All dependencies use permissive licenses (MIT, Apache-2.0, BSD-3-Clause) that are compatible with the MIT license of this project. The project uses only Microsoft-provided testing libraries and other well-established open source components without licensing restrictions.
 
 ## 🙏 Acknowledgments
 
