@@ -193,10 +193,14 @@ TallyMCP/
 ├── Program.cs              # Application entry point
 ├── appsettings.json        # Default configuration
 ├── TallyMCP.Tests/         # Comprehensive unit tests
+├── docs/                   # Documentation
+│   └── DEVELOPMENT.md      # Development guidelines
 ├── .github/workflows/      # CI/CD pipelines
 │   ├── ci.yml             # Continuous integration
 │   ├── ci-cd.yml          # Release pipeline
 │   └── security.yml       # Security analysis
+├── LICENSE.txt             # MIT license
+├── THIRD-PARTY-NOTICES.txt # Third-party attributions
 └── README.md              # This file
 ```
 
@@ -283,6 +287,10 @@ dotnet run --environment Development
 dotnet watch test
 ```
 
+### Development Guidelines
+
+For information about dependencies, licensing, and development best practices, see [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md).
+
 ## 📋 Requirements
 
 ### System Requirements
@@ -326,6 +334,21 @@ chmod +x TallyMCP
 ## 📄 License
 
 This project is licensed under the MIT License - see the [LICENSE.txt](LICENSE.txt) file for details.
+
+### Third-Party Licenses
+
+TallyMCP uses several third-party libraries, each with their own licenses:
+
+- **PdfPig**: Apache-2.0 License - Used for PDF text extraction
+- **Model Context Protocol SDK**: MIT License - Core MCP functionality
+- **Microsoft .NET Extensions**: MIT License - Hosting and dependency injection
+- **Testing Libraries**: Various licenses (Apache-2.0, MIT, BSD-3-Clause)
+
+For complete licensing information and attributions, see [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt).
+
+### License Compatibility
+
+All production dependencies use permissive licenses (MIT, Apache-2.0) that are compatible with the MIT license of this project. Test-only dependencies may have additional restrictions but do not affect the distribution of the main application.
 
 ## 🙏 Acknowledgments
 
