@@ -29,7 +29,8 @@ public static class TallyXmlParser
         {
             var doc = XDocument.Parse(xml);
             var companies = doc.Descendants("COMPANY")
-                .Select(c => new {
+                .Select(c => new
+                {
                     Name = c.Attribute("NAME")?.Value ?? c.Element("NAME")?.Value
                 })
                 .Where(c => !string.IsNullOrEmpty(c.Name))
@@ -45,7 +46,8 @@ public static class TallyXmlParser
         {
             var doc = XDocument.Parse(xml);
             var ledgers = doc.Descendants("LEDGER")
-                .Select(l => new {
+                .Select(l => new
+                {
                     Name = l.Attribute("NAME")?.Value ?? l.Element("NAME")?.Value,
                     Parent = l.Element("PARENT")?.Value
                 })

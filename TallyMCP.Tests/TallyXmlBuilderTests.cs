@@ -10,7 +10,7 @@ public class TallyXmlBuilderTests
     {
         // Act
         var result = TallyXmlBuilder.BuildCompanyListRequestXml();
-        
+
         // Assert
         result.Should().NotBeNullOrEmpty();
         result.Should().Contain("<ENVELOPE>");
@@ -29,10 +29,10 @@ public class TallyXmlBuilderTests
     {
         // Arrange
         var companyName = "Test Company";
-        
+
         // Act
         var result = TallyXmlBuilder.BuildLedgerListRequestXml(companyName);
-        
+
         // Assert
         result.Should().NotBeNullOrEmpty();
         result.Should().Contain("<ENVELOPE>");
@@ -64,10 +64,10 @@ public class TallyXmlBuilderTests
                 FromAccount = "Sales"
             }
         };
-        
+
         // Act
         var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
-        
+
         // Assert
         result.Should().NotBeNullOrEmpty();
         result.Should().Contain("<ENVELOPE>");
@@ -90,10 +90,10 @@ public class TallyXmlBuilderTests
     {
         // Arrange
         var input = "Test & <Company> \"Name\" 'Value'";
-        
+
         // Act
         var result = TallyXmlBuilder.EncodeXmlText(input);
-        
+
         // Assert
         result.Should().Be("Test &amp; &lt;Company&gt; &quot;Name&quot; &apos;Value&apos;");
     }
@@ -119,7 +119,7 @@ public class TallyXmlBuilderTests
         {
             new() { Type = "Receipt", Date = input, Narration = "Test", Amount = 100, ToLedger = "Cash", FromAccount = "Sales" }
         });
-        
+
         // Assert
         result.Should().Contain($"<DATE>{expected}</DATE>");
     }

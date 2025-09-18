@@ -28,10 +28,10 @@ public class TallyXmlParserTests
         </CMPINFO>
     </BODY>
 </ENVELOPE>";
-        
+
         // Act
         var result = TallyXmlParser.ParseImportResponseToJson(xml);
-        
+
         // Assert
         result.Should().NotBeNull();
         var dict = result as Dictionary<string, object>;
@@ -45,10 +45,10 @@ public class TallyXmlParserTests
     {
         // Arrange
         var invalidXml = "<invalid>xml";
-        
+
         // Act
         var result = TallyXmlParser.ParseImportResponseToJson(invalidXml);
-        
+
         // Assert
         result.Should().BeNull();
     }
@@ -73,14 +73,14 @@ public class TallyXmlParserTests
         </DATA>
     </BODY>
 </ENVELOPE>";
-        
+
         // Act
         var result = TallyXmlParser.ParseCompanyListToJson(xml);
-        
+
         // Assert
         result.Should().NotBeNull();
         result.Should().BeAssignableTo<System.Collections.IEnumerable>();
-        
+
         // Cast to IEnumerable to count items
         var companies = (System.Collections.IEnumerable)result!;
         var companyList = companies.Cast<object>().ToList();
@@ -92,10 +92,10 @@ public class TallyXmlParserTests
     {
         // Arrange
         var invalidXml = "<invalid>xml";
-        
+
         // Act
         var result = TallyXmlParser.ParseCompanyListToJson(invalidXml);
-        
+
         // Assert
         result.Should().BeNull();
     }
@@ -122,14 +122,14 @@ public class TallyXmlParserTests
         </DATA>
     </BODY>
 </ENVELOPE>";
-        
+
         // Act
         var result = TallyXmlParser.ParseLedgerListToJson(xml);
-        
+
         // Assert
         result.Should().NotBeNull();
         result.Should().BeAssignableTo<System.Collections.IEnumerable>();
-        
+
         // Cast to IEnumerable to count items
         var ledgers = (System.Collections.IEnumerable)result!;
         var ledgerList = ledgers.Cast<object>().ToList();
@@ -141,10 +141,10 @@ public class TallyXmlParserTests
     {
         // Arrange
         var invalidXml = "<invalid>xml";
-        
+
         // Act
         var result = TallyXmlParser.ParseLedgerListToJson(invalidXml);
-        
+
         // Assert
         result.Should().BeNull();
     }
@@ -163,14 +163,14 @@ public class TallyXmlParserTests
         </DATA>
     </BODY>
 </ENVELOPE>";
-        
+
         // Act
         var result = TallyXmlParser.ParseLedgerListToJson(xml);
-        
+
         // Assert
         result.Should().NotBeNull();
         result.Should().BeAssignableTo<System.Collections.IEnumerable>();
-        
+
         // Cast to IEnumerable to count items
         var ledgers = (System.Collections.IEnumerable)result!;
         var ledgerList = ledgers.Cast<object>().ToList();

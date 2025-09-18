@@ -1,0 +1,166 @@
+name: TallyMCP CI/CD Pipeline
+permissions:
+  # Required for all workflows
+  security-events: write
+  # Required for workflows in private repositories
+  actions: read
+  contents: read
+
+on:
+  push:
+    branches: [ main, master, develop, 'feature/*', 'bugfix/*', 'copilot/*' ]
+  pull_request:
+    branches: [ main, master, develop ]
+  release:
+    types: [ published ]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly security scan on Mondays at 2 AM
+
+env:
+  DOTNET_VERSION: '8.0.x'
+  PROJECT_NAME: 'TallyMCP'
+
+jobs:
+  # Main build, test, and analysis job
+  build-and-test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required for better analysis
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Cache NuGet packages
+      uses: actions/cache@v4
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Check code formatting
+      if: matrix.os == 'ubuntu-latest'
+      shell: bash
+      run: |
+        set -eo pipefail
+        dotnet format TallyMCP.sln --verify-no-changes --verbosity diagnostic || {
+          echo "::error::Code formatting check failed. Run 'dotnet format TallyMCP.sln' locally to fix."
+          exit 1
+        }
+    
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+    
+    - name: Run tests with coverage
+      run: dotnet test --no-build --configuration Release --verbosity normal --logger trx --results-directory "TestResults" --collect:"XPlat Code Coverage"
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.os }}-${{ github.run_number }}
+        path: TestResults/
+        retention-days: 7
+    
+    # Security analysis steps
+    - name: Initialize CodeQL
+      if: matrix.os == 'ubuntu-latest'
+      uses: github/codeql-action/init@v3
+      with:
+        languages: csharp
+        queries: security-and-quality
+
+    - name: Run security scan
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        dotnet list package --vulnerable --include-transitive
+        dotnet list package --deprecated
+
+    # Build for CodeQL Analysis (after CodeQL init, before analysis)
+    - name: Build for CodeQL
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        dotnet build --no-incremental --configuration Release
+
+  # Publish job - only runs on release
+  publish:
+    needs: build-and-test
+    if: github.event_name == 'release'
+    permissions:
+      contents: write
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux-x64
+            extension: ''
+          - os: windows-latest
+            platform: win-x64
+            extension: '.exe'
+          - os: macos-latest
+            platform: osx-x64
+            extension: ''
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+    
+    - name: Restore dependencies
+      run: dotnet restore
+    
+    - name: Publish binary
+      run: |
+        dotnet publish ${{ env.PROJECT_NAME }}.csproj -c Release -r ${{ matrix.platform }} \
+          --self-contained true \
+          -p:PublishSingleFile=true \
+          -p:PublishTrimmed=true \
+          -o ./publish/${{ matrix.platform }}
+    
+    - name: Upload binary
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.PROJECT_NAME }}-${{ matrix.platform }}
+        path: ./publish/${{ matrix.platform }}/${{ env.PROJECT_NAME }}${{ matrix.extension }}
+        retention-days: 7
+    
+    - name: Create GitHub Release Asset
+      if: github.event_name == 'release'
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./publish/${{ matrix.platform }}/${{ env.PROJECT_NAME }}${{ matrix.extension }}
+        asset_name: ${{ env.PROJECT_NAME }}-${{ matrix.platform }}${{ matrix.extension }}
+        asset_content_type: application/octet-stream
+
+  # Cleanup job - runs on schedule to clean up old artifacts
+  cleanup:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: Delete old artifacts
+        uses: actions/delete-artifact@v4
+        with:
+          # Remove artifacts older than 7 days
+          age: '7 days'

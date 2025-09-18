@@ -10,7 +10,7 @@ public class TallyXmlSanitizerTests
     {
         // Act
         var result = TallyXmlSanitizer.Sanitize(null!);
-        
+
         // Assert
         result.Should().BeEmpty();
     }
@@ -20,7 +20,7 @@ public class TallyXmlSanitizerTests
     {
         // Act
         var result = TallyXmlSanitizer.Sanitize("");
-        
+
         // Assert
         result.Should().BeEmpty();
     }
@@ -30,10 +30,10 @@ public class TallyXmlSanitizerTests
     {
         // Arrange
         var input = "Some text&#4;with control character";
-        
+
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be("Some textwith control character");
     }
@@ -43,10 +43,10 @@ public class TallyXmlSanitizerTests
     {
         // Arrange
         var input = "Company & Associates";
-        
+
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be("Company &amp; Associates");
     }
@@ -56,10 +56,10 @@ public class TallyXmlSanitizerTests
     {
         // Arrange
         var input = "Company &amp; Associates &lt;Test&gt; &quot;Quote&quot; &apos;Apostrophe&apos;";
-        
+
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be("Company &amp; Associates &lt;Test&gt; &quot;Quote&quot; &apos;Apostrophe&apos;");
     }
@@ -69,10 +69,10 @@ public class TallyXmlSanitizerTests
     {
         // Arrange
         var input = "Test&#4; & &amp; content with & special chars";
-        
+
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be("Test &amp; &amp; content with &amp; special chars");
     }
@@ -82,10 +82,10 @@ public class TallyXmlSanitizerTests
     {
         // Arrange
         var input = "Normal text without special characters";
-        
+
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be("Normal text without special characters");
     }
@@ -100,7 +100,7 @@ public class TallyXmlSanitizerTests
     {
         // Act
         var result = TallyXmlSanitizer.Sanitize(input);
-        
+
         // Assert
         result.Should().Be(expected);
     }
