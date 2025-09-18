@@ -35,7 +35,7 @@ echo ""
 echo "=== Checking Production Dependencies ==="
 
 # Extract dependencies using dotnet CLI
-PACKAGES=$(dotnet list package --format json 2>/dev/null | grep -A5 -B5 '"id"' | grep -E '"(PdfPig|ModelContextProtocol|Microsoft\.Extensions)' || echo "")
+PACKAGES=$(dotnet list package --format json 2>/dev/null | jq -r '.projects[].frameworks[].dependencies[].id' | grep -E '^(PdfPig|ModelContextProtocol|Microsoft\.Extensions)' || echo "")
 
 if [ -n "$PACKAGES" ]; then
     echo "✅ Main dependencies found in project"
