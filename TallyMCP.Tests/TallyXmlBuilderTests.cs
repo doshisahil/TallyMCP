@@ -87,28 +87,6 @@ public class TallyXmlBuilderTests
         Assert.Contains("<AMOUNT>-1000.50</AMOUNT>", result);
     }
 
-    [Fact]
-    public void EncodeXmlText_WithSpecialCharacters_ShouldEscapeCorrectly()
-    {
-        // Arrange
-        var input = "Test & <Company> \"Name\" 'Value'";
-
-        // Act
-        var result = TallyXmlBuilder.EncodeXmlText(input);
-
-        // Assert
-        Assert.Equal("Test &amp; &lt;Company&gt; &quot;Name&quot; &apos;Value&apos;", result);
-    }
-
-    [Fact]
-    public void EncodeXmlText_WithNullOrEmpty_ShouldReturnEmpty()
-    {
-        // Act & Assert
-        Assert.Empty(TallyXmlBuilder.EncodeXmlText(null!));
-        Assert.Empty(TallyXmlBuilder.EncodeXmlText(""));
-        Assert.Empty(TallyXmlBuilder.EncodeXmlText(string.Empty));
-    }
-
     [Theory]
     [InlineData("01-01-2024", "20240101")]
     [InlineData("2024-01-01", "20240101")]

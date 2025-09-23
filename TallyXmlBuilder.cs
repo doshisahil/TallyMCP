@@ -34,7 +34,7 @@ public static class TallyXmlBuilder
 
     public static string BuildLedgerListRequestXml(string companyName)
     {
-        var safeCompanyName = EncodeXmlText(companyName);
+        var safeCompanyName = companyName;
         var envelope = new XElement("ENVELOPE",
             new XElement("HEADER",
                 new XElement("VERSION", "1"),
@@ -69,15 +69,15 @@ public static class TallyXmlBuilder
         var tallyMessages = transactions.Select(t =>
             new XElement("VOUCHER",
                 new XElement("DATE", FormatDateForTally(t.Date)),
-                new XElement("NARRATION", EncodeXmlText(t.Narration)),
-                new XElement("VOUCHERTYPENAME", EncodeXmlText(t.Type)),
+                new XElement("NARRATION", (t.Narration)),
+                new XElement("VOUCHERTYPENAME", (t.Type)),
                 new XElement("ALLLEDGERENTRIES.LIST",
-                    new XElement("LEDGERNAME", EncodeXmlText(IsReceipt(t.Type) ? t.FromAccount : t.ToLedger)),
+                    new XElement("LEDGERNAME",  t.ToLedger),
                     new XElement("ISDEEMEDPOSITIVE", "Yes"),
                     new XElement("AMOUNT", $"-{Math.Abs(t.Amount)}")
                 ),
                 new XElement("ALLLEDGERENTRIES.LIST",
-                    new XElement("LEDGERNAME", EncodeXmlText(IsReceipt(t.Type) ? t.ToLedger : t.FromAccount)),
+                    new XElement("LEDGERNAME", t.FromAccount),
                     new XElement("ISDEEMEDPOSITIVE", "No"),
                     new XElement("AMOUNT", $"{Math.Abs(t.Amount)}")
                 )
@@ -107,15 +107,6 @@ public static class TallyXmlBuilder
         return new string(date?.Where(char.IsDigit).ToArray() ?? new char[0]);
     }
 
-    public static string EncodeXmlText(string text)
-    {
-        if (string.IsNullOrEmpty(text)) return string.Empty;
-        return text.Replace("&", "&amp;")
-                   .Replace("<", "&lt;")
-                   .Replace(">", "&gt;")
-                   .Replace("\"", "&quot;")
-                   .Replace("'", "&apos;");
-    }
 
     private static bool IsReceipt(string type)
     {
