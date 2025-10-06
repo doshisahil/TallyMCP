@@ -25,10 +25,10 @@ public static class TallyTool
         public string FromAccount { get; set; } = string.Empty;
     }
 
-    [McpServerTool, Description("Imports a list of transactions from JSON and sends them to Tally.")]
-    public static async Task<string> ImportVoucher(List<Transaction> transactions)
+    [McpServerTool, Description("Imports a list of transactions from JSON and sends them to Tally. Accepts the company name as a parameter.")]
+    public static async Task<string> ImportVoucher(List<Transaction> transactions, string companyName)
     {
-        var requestXml = TallyXmlBuilder.BuildVoucherImportXml(transactions);
+        var requestXml = TallyXmlBuilder.BuildVoucherImportXml(transactions, companyName);
         var responseXml = await TallyHttpClientExtensions.PostToTallyAsync(requestXml);
         var sanitizedXml = TallyXmlSanitizer.Sanitize(responseXml);
         var json = TallyXmlParser.ParseImportResponseToJson(sanitizedXml);
@@ -125,6 +125,8 @@ public static class TallyPrompt
         "   - Specially ignore narration 'B/F' and 'C/F' transactions in ICICI bank statements.\n" +
         "   - Specially ignore narration 'OPENING BALANCE' transactions in Kotak bank statements.\n" +
         "   - Ignore any rows with the narration containing 'B/F' or 'C/F'.\n" +
-        "\nIf you need to extract text from a password-protected PDF, call the `ExtractTextFromPdf` tool with the password parameter. Use the extracted text for all further processing.";
+        "\nIf you need to extract text from a password-protected PDF, call the `ExtractTextFromPdf` tool with the password parameter. Use the extracted text for all further processing." +
+        "use ImportVoucher tool to import the transactions.\n" +
+        "From Next attached PDF optimize call to fetching company and ledger details. if applicable.\n";
     }
 }

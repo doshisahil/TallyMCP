@@ -64,7 +64,7 @@ public static class TallyXmlBuilder
         return envelope.ToString(SaveOptions.DisableFormatting);
     }
 
-    public static string BuildVoucherImportXml(List<TallyTool.Transaction> transactions)
+    public static string BuildVoucherImportXml(List<TallyTool.Transaction> transactions, string companyName)
     {
         var tallyMessages = transactions.Select(t =>
             new XElement("VOUCHER",
@@ -91,7 +91,11 @@ public static class TallyXmlBuilder
                 new XElement("ID", "Vouchers")
             ),
             new XElement("BODY",
-                new XElement("DESC"),
+                new XElement("DESC",
+                    new XElement("STATICVARIABLES",
+                        new XElement("SVCURRENTCOMPANY", companyName)
+                    )
+                ),
                 new XElement("DATA",
                     tallyMessages.Select(msg => new XElement("TALLYMESSAGE", msg))
                 )
