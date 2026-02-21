@@ -87,6 +87,119 @@ public class TallyXmlBuilderTests
         Assert.Contains("<AMOUNT>-1000.50</AMOUNT>", result);
     }
 
+    [Fact]
+    public void BuildVoucherImportXml_WithPaymentTransaction_ShouldGenerateValidXml()
+    {
+        // Arrange
+        var transactions = new List<TallyTool.Transaction>
+        {
+            new()
+            {
+                Type = "Payment",
+                Date = "01-01-2024",
+                Narration = "Office rent payment",
+                Amount = 5000.00m,
+                ToLedger = "Rent",
+                FromAccount = "Bank"
+            }
+        };
+
+        // Act
+        var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<VOUCHERTYPENAME>Payment</VOUCHERTYPENAME>", result);
+        Assert.Contains("<LEDGERNAME>Rent</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<LEDGERNAME>Bank</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<AMOUNT>-5000.00</AMOUNT>", result);
+        Assert.Contains("<AMOUNT>5000.00</AMOUNT>", result);
+    }
+
+    [Fact]
+    public void BuildVoucherImportXml_WithContraTransaction_ShouldGenerateValidXml()
+    {
+        // Arrange
+        var transactions = new List<TallyTool.Transaction>
+        {
+            new()
+            {
+                Type = "Contra",
+                Date = "15-03-2024",
+                Narration = "Cash deposited into bank",
+                Amount = 10000.00m,
+                ToLedger = "HDFC Bank",
+                FromAccount = "Cash"
+            }
+        };
+
+        // Act
+        var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<VOUCHERTYPENAME>Contra</VOUCHERTYPENAME>", result);
+        Assert.Contains("<LEDGERNAME>HDFC Bank</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<LEDGERNAME>Cash</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<AMOUNT>-10000.00</AMOUNT>", result);
+        Assert.Contains("<AMOUNT>10000.00</AMOUNT>", result);
+    }
+
+    [Fact]
+    public void BuildVoucherImportXml_WithJournalTransaction_ShouldGenerateValidXml()
+    {
+        // Arrange
+        var transactions = new List<TallyTool.Transaction>
+        {
+            new()
+            {
+                Type = "Journal",
+                Date = "31-03-2024",
+                Narration = "Depreciation adjustment",
+                Amount = 2500.00m,
+                ToLedger = "Depreciation",
+                FromAccount = "Fixed Assets"
+            }
+        };
+
+        // Act
+        var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
+
+        // Assert
+        Assert.NotNull(result);
+        Assert.Contains("<VOUCHERTYPENAME>Journal</VOUCHERTYPENAME>", result);
+        Assert.Contains("<LEDGERNAME>Depreciation</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>Yes</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<LEDGERNAME>Fixed Assets</LEDGERNAME>", result);
+        Assert.Contains("<ISDEEMEDPOSITIVE>No</ISDEEMEDPOSITIVE>", result);
+        Assert.Contains("<AMOUNT>-2500.00</AMOUNT>", result);
+        Assert.Contains("<AMOUNT>2500.00</AMOUNT>", result);
+    }
+
+    [Theory]
+    [InlineData("Receipt")]
+    [InlineData("Payment")]
+    [InlineData("Contra")]
+    [InlineData("Journal")]
+    public void BuildVoucherImportXml_WithAllTransactionTypes_ShouldSetCorrectVoucherTypeName(string type)
+    {
+        // Arrange
+        var transactions = new List<TallyTool.Transaction>
+        {
+            new() { Type = type, Date = "01-01-2024", Narration = "Test", Amount = 100, ToLedger = "LedgerA", FromAccount = "LedgerB" }
+        };
+
+        // Act
+        var result = TallyXmlBuilder.BuildVoucherImportXml(transactions);
+
+        // Assert
+        Assert.Contains($"<VOUCHERTYPENAME>{type}</VOUCHERTYPENAME>", result);
+    }
+
     [Theory]
     [InlineData("01-01-2024", "20240101")]
     [InlineData("2024-01-01", "20240101")]

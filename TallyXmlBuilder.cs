@@ -64,7 +64,7 @@ public static class TallyXmlBuilder
         return envelope.ToString(SaveOptions.DisableFormatting);
     }
 
-    public static string BuildVoucherImportXml(List<TallyTool.Transaction> transactions, string companyName)
+    public static string BuildVoucherImportXml(List<TallyTool.Transaction> transactions, string companyName = "")
     {
         var tallyMessages = transactions.Select(t =>
             new XElement("VOUCHER",
@@ -111,9 +111,4 @@ public static class TallyXmlBuilder
         return new string(date?.Where(char.IsDigit).ToArray() ?? new char[0]);
     }
 
-
-    private static bool IsReceipt(string type)
-    {
-        return string.Equals(type?.Trim(), "receipt", StringComparison.OrdinalIgnoreCase);
-    }
 }
