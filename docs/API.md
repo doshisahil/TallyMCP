@@ -24,12 +24,12 @@ Imports a list of transactions into Tally ERP.
 {
   "transactions": [
     {
-      "Type": "string",        // "Receipt" or "Payment"
+      "Type": "string",        // "Receipt", "Payment", "Contra", or "Journal"
       "Date": "string",        // DD-MM-YYYY format
       "Narration": "string",   // Transaction description
       "Amount": "decimal",     // Transaction amount
-      "ToLedger": "string",    // Destination ledger name
-      "FromAccount": "string"  // Source account name
+      "ToLedger": "string",    // Debit ledger name
+      "FromAccount": "string"  // Credit account name
     }
   ]
 }
@@ -64,6 +64,30 @@ Imports a list of transactions into Tally ERP.
       "Amount": 5000.00,
       "ToLedger": "Cash",
       "FromAccount": "Sales"
+    },
+    {
+      "Type": "Payment",
+      "Date": "02-01-2024",
+      "Narration": "Office rent",
+      "Amount": 10000.00,
+      "ToLedger": "Rent",
+      "FromAccount": "Bank"
+    },
+    {
+      "Type": "Contra",
+      "Date": "03-01-2024",
+      "Narration": "Cash deposited to bank",
+      "Amount": 5000.00,
+      "ToLedger": "HDFC Bank",
+      "FromAccount": "Cash"
+    },
+    {
+      "Type": "Journal",
+      "Date": "31-01-2024",
+      "Narration": "Depreciation entry",
+      "Amount": 1000.00,
+      "ToLedger": "Depreciation",
+      "FromAccount": "Fixed Assets"
     }
   ]
 }
@@ -233,12 +257,12 @@ Returns a comprehensive prompt template for extracting transaction data from ban
 
 ```typescript
 interface Transaction {
-  Type: "Receipt" | "Payment";
+  Type: "Receipt" | "Payment" | "Contra" | "Journal";
   Date: string;        // DD-MM-YYYY format
   Narration: string;
   Amount: number;      // Decimal value
-  ToLedger: string;
-  FromAccount: string;
+  ToLedger: string;    // Debit ledger name
+  FromAccount: string; // Credit account name
 }
 ```
 

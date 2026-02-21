@@ -11,7 +11,7 @@ public static class TallyTool
 {
     public class Transaction
     {
-        [Description("Type of transaction (Receipt or Payment)")]
+        [Description("Type of transaction (Receipt, Payment, Contra, or Journal)")]
         public string Type { get; set; } = string.Empty;
         [Description("Date of the transaction in DD-MM-YYYY format")]
         public string Date { get; set; } = string.Empty;
@@ -112,7 +112,7 @@ public static class TallyPrompt
         "   - Focus only on rows that represent valid transactions. Ignore irrelevant data such as opening balances, closing balances, account numbers, headers, and any placeholder text like 'B/F' (brought forward) or 'C/F' (carried forward).\n" +
         "   - The table may not be explicitly labeled but will be evident from sequences of similar data formats.\n" +
         "5. **Transaction Classification**:\n" +
-        "   - Determine the transaction type as 'Receipt' for DEPOSITS or 'Payment' for WITHDRAWALS and 'Contra' for inter-account transfers.\n" +
+        "   - Determine the transaction type as 'Receipt' for DEPOSITS or 'Payment' for WITHDRAWALS, 'Contra' for inter-account transfers, and 'Journal' for manual adjustment entries.\n" +
         "   - If columns are unclear due to PDF-to-text conversion, use the balance change to identify the transaction type. For the first transaction, use the opening balance; for others, use the previous transaction balance.\n" +
         "6. **Date Handling**:\n" +
         "   - Extract the DATE field and reformat it into the DD-MM-YYYY format regardless of its original representation (e.g., '2023/01/10' → '10-01-2023').\n" +
